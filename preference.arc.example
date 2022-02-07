@@ -1,0 +1,14 @@
+@sandbox-startup
+node ./scripts/seed-db.js 
+
+# these env variables are inserted using `arc env` command.
+# The @env pragma is synced (and overwritten) by running arc env
+@env
+@testing
+GITHUB_CLIENT_ID xxxxxxxxx
+GITHUB_CLIENT_SECRET xxxxxxxxxx
+GITHUB_REDIRECT http://localhost:3333/app/branches
+
+@staging
+
+@production

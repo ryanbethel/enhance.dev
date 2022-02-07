@@ -1,0 +1,64 @@
+{
+    "name": "fwa-link-app",
+    "version": "0.0.0",
+    "description": "FWA example app",
+    "scripts": {
+        "start": "ARC_TABLES_PORT=5555 arc sandbox",
+        "lint": "eslint src --ignore-pattern node_modules --fix",
+        "test": "ARC_TABLES_PORT=5555 cross-env tape 'test/**/*-test.js' --verbose | tap-arc ",
+        "styles": "cssmitten ./css-config.json > ./public/components/styles.css"
+    },
+    "devDependencies": {
+        "@architect/architect": "^9.4.2",
+        "@architect/eslint-config": "^2.0.1",
+        "@begin/data": "^3.0.4",
+        "cssmitten": "^3.0.5",
+        "eslint": "^8.4.1",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.5.1",
+        "prettier-eslint": "^13.0.0",
+        "tap-arc": "^0.1.1",
+        "tape": "^5.3.2",
+        "tiny-json-http": "^7.3.0"
+    },
+    "dependencies": {
+        "@architect/functions": "^4.1.1",
+        "@enhance/ssr": "^2.0.0",
+        "jotform-css.js": "^1.0.1",
+        "jsonwebtoken": "^8.5.1",
+        "nanoid": "^3.1.20",
+        "xss": "^1.0.8"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@architect/eslint-config",
+            "plugin:prettier/recommended"
+        ],
+        "plugins": [
+            "prettier"
+        ],
+        "rules": {
+            "prettier/prettier": [
+                "error",
+                {
+                    "semi": false,
+                    "singleQuote": true,
+                    "tabWidth": 2,
+                    "useTabs": false,
+                    "trailingComma": "none",
+                    "bracketSameLine": true
+                }
+            ]
+        },
+        "parserOptions": {
+            "ecmaVersion": 2020,
+            "sourceType": "module"
+        },
+        "env": {
+            "es2021": true,
+            "browser": true,
+            "node": true
+        }
+    }
+}
