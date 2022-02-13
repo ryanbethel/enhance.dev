@@ -13,6 +13,7 @@ get /playground
 get /app/login
 get /app/auth
 post /logout
+post /repl
 get /*  #List of Redirects
 get /components/* #Fingerprinted Modules and components
 

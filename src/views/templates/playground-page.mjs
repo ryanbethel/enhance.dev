@@ -1,38 +1,52 @@
-export default function PlaygroundPage({ html }) {
+import scopeCSS from '../scope-css.mjs'
+export default function PlaygroundPage({ html, state }) {
+  function scope(css) {
+    scopeCSS({
+      css,
+      scopeTo: 'playground-page',
+      disabled: !state?.store?.scopedCSS
+    })
+  }
   return html`
     <style>
+      ${scope(`
       .min-row-height-playground {
         min-height: 18rem;
       }
+      `)}
     </style>
     <link rel="stylesheet" href="/components/styles.css" />
     <div class="bg-p2 text-p1">
       <nav-bar></nav-bar>
-      <div class="text-center m-auto font-sans text2 p1">
-        <h1>Playground</h1>
-      </div>
       <div class="m-auto ">
+        <noscript>
+          <button form="run-repl" type="submit">Run REPL</button>
+        </noscript>
         <div
-          class="grid col-2 pl0 pr0 gap-1 col-3-lg flow-row text1 m1 m-none-lg justify-between">
-          <div class="min-row-height-playground w-full  flex flex-col">
-            <h4 class="p-none pl0 font-sans">Authored Template(my-tag)</h4>
-            <code-editor class="js-authored-template"> </code-editor>
-          </div>
-          <div class="min-row-height-playground w-full  flex flex-col">
-            <h4 class="p-none pl0 font-sans">Authored Markup</h4>
-            <code-editor class="js-authored-markup"> </code-editor>
-          </div>
-          <div class="min-row-height-playground w-full  flex flex-col">
-            <h4 class="p-none pl0 font-sans">SSR Markup Output</h4>
-            <enhance-runner> </enhance-runner>
-          </div>
-          <div
-            class="min-row-height-playground w-full col-span-3 flex flex-col">
-            <h4 class="p-none pl0 font-sans">Output</h4>
-            <enhance-rendered class="js-output"> </enhance-rendered>
-          </div>
+          class="grid gap0 col-1  col-2-lg flow-row text1 m1 m-none-lg justify-between">
+          <tab-container quantity="2" class=" w-full h-screen ">
+            <span slot="title1">index</span>
+            <code-editor slot="content1" form-name="run-repl" text-name="index">
+            </code-editor>
+            <span slot="title2">my-component</span>
+            <code-editor
+              slot="content2"
+              form-name="run-repl"
+              text-name="my-component">
+            </code-editor>
+          </tab-container>
+          <tab-container quantity="2" class=" w-full h-screen ">
+            <span slot="title1">Preview</span>
+            <enhance-preview slot="content1"> </enhance-preview>
+            <span slot="title2">HTML</span>
+            <enhance-preview slot="content2"> </enhance-preview>
+          </tab-container>
         </div>
       </div>
+      <noscript>
+        <button form="run-repl" type="submit">Run REPL</button>
+        <form id="run-repl" action="/repl" method="POST"></form>
+      </noscript>
     </div>
   `
 }

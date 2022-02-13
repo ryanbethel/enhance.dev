@@ -9,7 +9,6 @@
         "styles": "cssmitten ./css-config.json > ./public/components/styles.css"
     },
     "devDependencies": {
-        "@architect/architect": "^9.4.2",
         "@architect/eslint-config": "^2.0.1",
         "@begin/data": "^3.0.4",
         "cssmitten": "^3.0.5",
@@ -23,11 +22,18 @@
         "tiny-json-http": "^7.3.0"
     },
     "dependencies": {
-        "@architect/functions": "^4.1.1",
+        "@architect/architect": "^9.5.4",
+        "@architect/functions": "^5.0.0-RC.2",
+        "@codemirror/basic-setup": "^0.19.1",
+        "@codemirror/commands": "^0.19.8",
+        "@codemirror/lang-html": "^0.19.4",
+        "@codemirror/view": "^0.19.42",
         "@enhance/ssr": "^2.0.0",
-        "jotform-css.js": "^1.0.1",
+        "css": "^3.0.0",
         "jsonwebtoken": "^8.5.1",
-        "nanoid": "^3.1.20",
+        "nanoid": "^3.2.0",
+        "prism": "^4.1.2",
+        "rework": "^1.0.1",
         "xss": "^1.0.8"
     },
     "eslintConfig": {
