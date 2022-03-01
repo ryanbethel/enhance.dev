@@ -1,6 +1,48 @@
 import * as cssParser from 'css'
 
-export default function scopeCss({
+export default function buildScoper({
+  scopeTo = '',
+  disable = false,
+  instance = ''
+}) {
+  return function scopeTag(strings, ...values) {
+    let str = ''
+    strings.forEach((string, i) => {
+      str += `${string || ''}${values[i] || ''}`
+    })
+    return scopeAllBlocks({ str, scopeTo, disable, instance })
+  }
+}
+
+function scopeAllBlocks({ str, scopeTo, disable, instance }) {
+  const matches = [
+    ...str.matchAll(
+      /(?<fullTag><style[^>]*?(enh-scope="\s*(?<scope>global|component|instance)[^">]*"[^>]*>)(?<insideBlock>[^<]*)<\/style>)|(?<noScopeFullTag><style>(?<noScopeInsideBlock>[^<]*)<\/style>)/gm
+    )
+  ]
+  let result = ''
+  matches.forEach((i) => {
+    if (!i.groups.scope) result += i.groups.noScopeFullTag
+    if (i.groups.scope === 'global') result += i.groups.fullTag
+    if (i.groups.scope === 'component')
+      result += `<style scope="${scopeTo}"> ${processBlock({
+        css: i.groups.insideBlock,
+        scopeTo,
+        disable,
+        instance
+      })} </style>}`
+    if (i.groups.scope === 'instance')
+      result += `<style scope="${scopeTo}.${instance}"> ${processBlock({
+        css: i.groups.insideBlock,
+        scopeTo,
+        disable,
+        instance
+      })} </style>}`
+  })
+  return result
+}
+
+function processBlock({
   css = '',
   scopeTo = '',
   disabled = false,
@@ -9,7 +51,7 @@ export default function scopeCss({
   if (disabled || !scopeTo) return css
   const parsed = cssParser.parse(css)
 
-  function scopeIt(arr) {
+  function changeRules(arr) {
     arr.forEach((v, i, a) => {
       if (v.type === 'rule') {
         a[i].selectors = a[i].selectors.map((s) =>
@@ -24,10 +66,10 @@ export default function scopeCss({
         )
       }
       if (v.type === 'media') {
-        scopeIt(a[i].rules)
+        changeRules(a[i].rules)
       }
     })
   }
-  scopeIt(parsed.stylesheet?.rules)
+  changeRules(parsed.stylesheet?.rules)
   return cssParser.stringify(parsed)
 }

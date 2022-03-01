@@ -3,6 +3,7 @@ import scopeCSS from '../scope-css.mjs'
 export default function NavBarTemplate({ html, state = {} }) {
   const { menuLinks = [{ name: 'Home', location: '/' }], location = '/' } =
     state.store
+  console.log('nav-bar', state)
 
   return html`
     <link rel="stylesheet" href="/components/styles.css" />

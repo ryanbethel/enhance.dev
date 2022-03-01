@@ -16,7 +16,7 @@ const patternDImport = new RegExp(
 
 const entryBoilerplate = `
 import enhance from '@enhance/ssr'
-import elements from '@architect/views/elements.mjs'
+//import elements from '@architect/views/elements.mjs'
 
 export default async function handler() {
  const html = enhance({
@@ -29,6 +29,31 @@ export default async function handler() {
     }
 }
 `
+
+const entryBoilerplateWithStuff = `
+function (){
+
+const html ={}
+const enhance ={}
+const elements ={}
+
+import enhance from '@enhance/ssr'
+import elements from '@architect/views/elements.mjs'
+
+return async function handler() {
+ const html = enhance({
+     // elements,
+     // initialState: {}
+    })
+
+    return {
+      document: html\`<div>Hello World</div>\`
+    }
+}
+
+}()
+`
+
 const entry1 = entryBoilerplate
   .replace(/export default/, 'return ')
   .replace(patternImport, "const $1= (await import('$2')).default")
@@ -38,7 +63,7 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 const entryFunc = new AsyncFunction(entry1)
 
 const templateBoilerplate = `
-export default function MyTagTemplate({ html,state={} }) {
+export default function({ html,state={} }) {
   const {store={},attr={}}=state
   return html\`
     <style>
@@ -61,19 +86,30 @@ export default function MyTagTemplate({ html,state={} }) {
   \`
 }
 `
+const template1 = templateBoilerplate
+  .replace(/export default/, 'return ')
+  .replace(patternImport, "const $1= (await import('$2')).default")
 
+const templateTagName = templateBoilerplate.replace(
+  new RegExp(
+    /^(.|\n|\r)*^\s*customElements.define\(['"]([a-zA-Z\-0-9]*)['"](.|\n|\r)*$/,
+    'mg'
+  ),
+  '$2'
+)
+// if args needed they go before function string new AsyncFunction("arg1",funcString)
+const templateFunction = new AsyncFunction(template1)
 export default async function HTML() {
-  console.log({ entry1 })
   console.log(await (await entryFunc())())
+  // console.log({ entry1 })
+  // console.log(await (await entryFunc())())
   try {
     let result = await data.get({ table: 'repl', key: 'user1' })
-    // console.log(result)
     html = enhance({
       elements,
       initialState: {
         scopedCSS: true,
-        repl: result?.repl || {},
-        context: {},
+        repl: result.repl,
         loggedIn: false,
         location: '/',
         menuLinks: [

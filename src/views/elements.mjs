@@ -8,7 +8,7 @@ import LandingPage from './templates/landing-page.mjs'
 import PlaygroundPage from './templates/playground-page.mjs'
 import CodeEditor from './templates/code-editor.mjs'
 import EnhancePreview from './templates/enhance-preview.mjs'
-import EnhanceRunner from './templates/enhance-runner.mjs'
+import MarkupPreview from './templates/markup-preview.mjs'
 import TabContainer from './templates/tab-container.mjs'
 export default {
   'flash-message': FlashMessage,
@@ -20,7 +20,7 @@ export default {
   'landing-page': LandingPage,
   'playground-page': PlaygroundPage,
   'code-editor': CodeEditor,
-  'enhance-runner': EnhanceRunner,
   'tab-container': TabContainer,
-  'enhance-preview': EnhancePreview
+  'enhance-preview': EnhancePreview,
+  'markup-preview': MarkupPreview
 }

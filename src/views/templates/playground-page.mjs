@@ -24,22 +24,33 @@ export default function PlaygroundPage({ html, state }) {
         </noscript>
         <div
           class="grid gap0 col-1  col-2-lg flow-row text1 m1 m-none-lg justify-between">
-          <tab-container quantity="2" class=" w-full h-screen ">
+          <tab-container quantity="3" class=" w-full h-screen ">
             <span slot="title1">index</span>
-            <code-editor slot="content1" form-name="run-repl" text-name="index">
+            <code-editor
+              slot="content1"
+              form-name="run-repl"
+              doc-name="entrySrc">
             </code-editor>
-            <span slot="title2">my-component</span>
+            <span slot="title2">template-1</span>
             <code-editor
               slot="content2"
               form-name="run-repl"
-              text-name="my-component">
+              doc-name="component1Src"></code-editor>
+            <span slot="title3">template-2</span>
+            <code-editor
+              slot="content3"
+              form-name="run-repl"
+              doc-name="component2Src">
             </code-editor>
           </tab-container>
           <tab-container quantity="2" class=" w-full h-screen ">
             <span slot="title1">Preview</span>
-            <enhance-preview slot="content1"> </enhance-preview>
+            <enhance-preview slot="content1" doc-src="previewDoc">
+            </enhance-preview>
             <span slot="title2">HTML</span>
-            <enhance-preview slot="content2"> </enhance-preview>
+            <markup-preview
+              slot="content2"
+              doc-name="enhancedMarkup"></markup-preview>
           </tab-container>
         </div>
       </div>

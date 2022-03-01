@@ -17,6 +17,10 @@ post /repl
 get /*  #List of Redirects
 get /components/* #Fingerprinted Modules and components
 
+@event
+run-repl-code
+manage-repl
+
 @tables
 data
   scopeID *String

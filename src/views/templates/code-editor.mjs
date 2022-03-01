@@ -1,8 +1,8 @@
 // import scopeCss from '../scope-css.mjs'
 export default function CodeEditorTemplate({ html, state = {} }) {
   const formName = state?.attrs['form-name'] || ''
-  const textName = state?.attrs['text-name'] || ''
-  const initialDoc = (state?.store?.repl && state.store.repl[textName]) || ''
+  const docName = state?.attrs['doc-name'] || ''
+  const initialDoc = (state?.store?.repl && state.store.repl[docName]) || ''
   return html`
     <style>
       .min-height-editor {
@@ -45,8 +45,8 @@ export default function CodeEditorTemplate({ html, state = {} }) {
       <div class="js-editor hidden font-mono text-p1 text0"></div>
       <noscript>
         <textarea
-          class="  h-screen p0 w-full h-full font-mono text0  text-p2"
-          name="${textName}"
+          class="  h-screen p0 w-full h-full font-mono text0  text-p2 leading1"
+          name="${docName}"
           form="${formName}"
           placeholder="Enter HTML Source Code"
           spellcheck="false">
@@ -62,7 +62,7 @@ ${initialDoc}</textarea
         constructor() {
           super()
           this.editorContainer = this.querySelector('div.js-editor')
-          const doc = '${initialDoc}'
+          const doc = '\${initialDoc}' //TODO: This needs work. If you inject the doc here it escapes the template early.
 
           const {
             EditorState,
