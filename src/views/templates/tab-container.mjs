@@ -1,18 +1,16 @@
-import scopeCss from '../scope-css.mjs'
-import { nanoid } from 'nanoid'
+import buildScoper from '../scope-css.mjs'
 export default function TabContainerTemplate({ html, state = {} }) {
-  const instanceGUID = nanoid(5)
+  const id = Math.random().toString(32).slice(2)
   const quantity = parseInt(state?.attrs?.quantity, 10) || 1
   const defaultTab = parseInt(state?.attrs['default-tab'], 10) || 1
-  const scope = (css) =>
-    scopeCss({
-      css,
-      scopeTo: 'tab-container',
-      disabled: !state?.store?.scopedCSS
-    })
+  const scope = buildScoper({
+    instance: id,
+    scopeTo: 'tab-container',
+    disable: !state?.store?.scopedCSS
+  })
   return html`
-    <style>
-      ${scope(`
+    ${scope`
+    <style enh-scope="component">
       :host {
         display:block;
       }
@@ -57,21 +55,21 @@ export default function TabContainerTemplate({ html, state = {} }) {
         border: 1px solid #ccc;
         display: none;
       }
-      input[type=radio][name="tab-group-${instanceGUID}"]:checked ~ label {
+      input[type=radio][name="tab-group-${id}"]:checked ~ label {
         background: white;
         border-bottom: 1px solid white;
       }
     
      
-       input[type=radio][name="tab-group-${instanceGUID}"]:not(:checked) ~ label {
+       input[type=radio][name="tab-group-${id}"]:not(:checked) ~ label {
         background: gray;
         border-bottom: 1px solid white;
       }
-      input[type=radio][name="tab-group-${instanceGUID}"]:checked ~ label ~ .tab-content {
+      input[type=radio][name="tab-group-${id}"]:checked ~ label ~ .tab-content {
         display: block;
       }
-      `)}
     </style>
+      `}
     <link rel="stylesheet" href="/components/styles.css" />
 
     <div class="tabs">
@@ -79,14 +77,12 @@ export default function TabContainerTemplate({ html, state = {} }) {
         .map(
           (_, i) => `
       <div class="tab">
-        <input type="radio" id="tab${
-          i + 1
-        }-${instanceGUID}" name="tab-group-${instanceGUID}" ${
+        <input type="radio" id="tab${i + 1}-${id}" name="tab-group-${id}" ${
             i + 1 === defaultTab ? 'checked' : ''
           } />
-        <label for="tab${i + 1}-${instanceGUID}"><slot name="title${
+        <label for="tab${i + 1}-${id}"><slot name="title${i + 1}">tab${
             i + 1
-          }">tab${i + 1}</slot></label>
+          }</slot></label>
         <div class="tab-content">
           <slot name="content${i + 1}">text ${i + 1}</slot>
         </div>

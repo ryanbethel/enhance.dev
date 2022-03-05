@@ -5,62 +5,21 @@ import data from '@begin/data'
 import elements from '@architect/views/elements.mjs'
 let html = enhance()
 
-const patternImport = new RegExp(
-  /import(?:["'\s]*([\w*${}\n\r\t, ]+)from\s*)?["'\s]["'\s](.*[@\w_-]+)["'\s].*;?$/,
-  'mg'
-)
-const patternDImport = new RegExp(
-  /import\((?:["'\s]*([\w*{}\n\r\t, ]+)\s*)?["'\s](.*([@\w_-]+))["'\s].*\);?$/,
-  'mg'
-)
-
 const entryBoilerplate = `
-import enhance from '@enhance/ssr'
+//import enhance from '@enhance/ssr'
 //import elements from '@architect/views/elements.mjs'
 
 export default async function handler() {
- const html = enhance({
-     // elements,
-     // initialState: {}
-    })
+ // const html = enhance({
+ //   elements,
+ //   initialState: {}
+ // })
 
     return {
       document: html\`<div>Hello World</div>\`
     }
 }
 `
-
-const entryBoilerplateWithStuff = `
-function (){
-
-const html ={}
-const enhance ={}
-const elements ={}
-
-import enhance from '@enhance/ssr'
-import elements from '@architect/views/elements.mjs'
-
-return async function handler() {
- const html = enhance({
-     // elements,
-     // initialState: {}
-    })
-
-    return {
-      document: html\`<div>Hello World</div>\`
-    }
-}
-
-}()
-`
-
-const entry1 = entryBoilerplate
-  .replace(/export default/, 'return ')
-  .replace(patternImport, "const $1= (await import('$2')).default")
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-
-// if args needed they go before function string new AsyncFunction("arg1",funcString)
-const entryFunc = new AsyncFunction(entry1)
 
 const templateBoilerplate = `
 export default function({ html,state={} }) {
@@ -86,30 +45,29 @@ export default function({ html,state={} }) {
   \`
 }
 `
-const template1 = templateBoilerplate
-  .replace(/export default/, 'return ')
-  .replace(patternImport, "const $1= (await import('$2')).default")
-
-const templateTagName = templateBoilerplate.replace(
-  new RegExp(
-    /^(.|\n|\r)*^\s*customElements.define\(['"]([a-zA-Z\-0-9]*)['"](.|\n|\r)*$/,
-    'mg'
-  ),
-  '$2'
-)
-// if args needed they go before function string new AsyncFunction("arg1",funcString)
-const templateFunction = new AsyncFunction(template1)
-export default async function HTML() {
-  console.log(await (await entryFunc())())
-  // console.log({ entry1 })
-  // console.log(await (await entryFunc())())
+export default async function HTML(req) {
+  const key = req?.query?.key
   try {
-    let result = await data.get({ table: 'repl', key: 'user1' })
+    let repl = {
+      enhancedMarkup: '',
+      previewDoc: '',
+      entrySrc: entryBoilerplate,
+      component1Src: templateBoilerplate,
+      component2Src: ''
+    }
+    if (key) {
+      const result = await poll(
+        async () => data.get({ table: 'repl', key }),
+        2000,
+        100
+      ).catch((e) => console.log(e))
+      repl = result?.repl ? result.repl : repl
+    }
     html = enhance({
       elements,
       initialState: {
         scopedCSS: true,
-        repl: result.repl,
+        repl,
         loggedIn: false,
         location: '/',
         menuLinks: [
@@ -125,8 +83,8 @@ export default async function HTML() {
       html: html` ${document({
         body: `<playground-page></playground-page>`,
         scripts: `
-        <script src="/components/enhance-source/parse5.browserify.min.js"></script>
-        <script src="/components/prism.js"></script> `
+         <script src="/components/enhance-source/parse5.browserify.min.js"></script>
+         <script src="/components/prism.js"></script> `
       })}`
     }
   } catch (err) {
@@ -136,4 +94,27 @@ export default async function HTML() {
       html: html`<error-page error=${err}></error-page>`
     }
   }
+}
+
+async function poll(fn, timeout, interval) {
+  const endTime = Number(new Date()) + (timeout || 2000)
+  interval = interval || 100
+
+  async function checkCondition(resolve, reject) {
+    // If the condition is met, we're done!
+    const result = await fn()
+    if (result) {
+      resolve(result)
+    }
+    // If the condition isn't met but the timeout hasn't elapsed, go again
+    else if (Number(new Date()) < endTime) {
+      setTimeout(checkCondition, interval, resolve, reject)
+    }
+    // Didn't match and too much time, reject!
+    else {
+      reject(new Error('timed out for ' + fn + ': ' + arguments))
+    }
+  }
+
+  return new Promise(checkCondition)
 }

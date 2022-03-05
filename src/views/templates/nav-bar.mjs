@@ -1,16 +1,17 @@
-import scopeCSS from '../scope-css.mjs'
+import buildScoper from '../scope-css.mjs'
 
 export default function NavBarTemplate({ html, state = {} }) {
   const { menuLinks = [{ name: 'Home', location: '/' }], location = '/' } =
     state.store
-  console.log('nav-bar', state)
 
+  const scope = buildScoper({
+    scopeTo: 'nav-bar',
+    disable: !state?.store?.scopedCSS
+  })
   return html`
     <link rel="stylesheet" href="/components/styles.css" />
-    <style>
-      ${scopeCSS({
-        scopeTo: 'nav-bar',
-        css: `
+    ${scope`
+    <style enh-scope="component">
 
       .mobile-menu-items a {
         text-decoration: none;
@@ -77,9 +78,8 @@ export default function NavBarTemplate({ html, state = {} }) {
         left: calc(-100vw + 50px);
       }
 
-`
-      })}
     </style>
+    `}
 
     <header class="bg-p0">
       <nav class="m-auto p0">

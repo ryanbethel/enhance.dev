@@ -1,20 +1,17 @@
-import scopeCSS from '../scope-css.mjs'
+import buildScoper from '../scope-css.mjs'
 export default function PlaygroundPage({ html, state }) {
-  function scope(css) {
-    scopeCSS({
-      css,
-      scopeTo: 'playground-page',
-      disabled: !state?.store?.scopedCSS
-    })
-  }
+  const scope = buildScoper({
+    scopeTo: 'playground-page',
+    disable: !state?.store?.scopedCSS
+  })
   return html`
+    ${scope`
     <style>
-      ${scope(`
       .min-row-height-playground {
         min-height: 18rem;
       }
-      `)}
     </style>
+      `}
     <link rel="stylesheet" href="/components/styles.css" />
     <div class="bg-p2 text-p1">
       <nav-bar></nav-bar>
@@ -52,6 +49,7 @@ export default function PlaygroundPage({ html, state }) {
               slot="content2"
               doc-name="enhancedMarkup"></markup-preview>
           </tab-container>
+          <enhance-runner></enhance-runner>
         </div>
       </div>
       <noscript>

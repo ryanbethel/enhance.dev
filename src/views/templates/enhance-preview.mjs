@@ -7,11 +7,23 @@ export default function EnhancePreviewTemplate({ html, state = {} }) {
     </div>
 
     <script type="module">
+      import API from '/components/data/api.mjs'
       class EnhancePreview extends HTMLElement {
         constructor() {
           super()
-
+          this.api = API()
+          this.update = this.update.bind(this)
           this.iframe = this.querySelector('iframe')
+        }
+        connectedCallback() {
+          this.api.subscribe(this.update)
+        }
+        disconnectedCallback() {
+          this.api.unsubscribe(this.update)
+        }
+
+        update(srcDoc) {
+          this.iframe.setAttribute('srcdoc', srcDoc.iframeSrc)
         }
       }
       customElements.define('enhance-preview', EnhancePreview)

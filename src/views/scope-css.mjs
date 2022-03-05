@@ -2,7 +2,7 @@ import * as cssParser from 'css'
 
 export default function buildScoper({
   scopeTo = '',
-  disable = false,
+  disabled = false,
   instance = ''
 }) {
   return function scopeTag(strings, ...values) {
@@ -10,11 +10,11 @@ export default function buildScoper({
     strings.forEach((string, i) => {
       str += `${string || ''}${values[i] || ''}`
     })
-    return scopeAllBlocks({ str, scopeTo, disable, instance })
+    return scopeAllBlocks({ str, scopeTo, disabled, instance })
   }
 }
 
-function scopeAllBlocks({ str, scopeTo, disable, instance }) {
+function scopeAllBlocks({ str, scopeTo, disabled, instance }) {
   const matches = [
     ...str.matchAll(
       /(?<fullTag><style[^>]*?(enh-scope="\s*(?<scope>global|component|instance)[^">]*"[^>]*>)(?<insideBlock>[^<]*)<\/style>)|(?<noScopeFullTag><style>(?<noScopeInsideBlock>[^<]*)<\/style>)/gm
@@ -25,19 +25,23 @@ function scopeAllBlocks({ str, scopeTo, disable, instance }) {
     if (!i.groups.scope) result += i.groups.noScopeFullTag
     if (i.groups.scope === 'global') result += i.groups.fullTag
     if (i.groups.scope === 'component')
-      result += `<style scope="${scopeTo}"> ${processBlock({
-        css: i.groups.insideBlock,
-        scopeTo,
-        disable,
-        instance
-      })} </style>}`
+      result += `<style enh-scope="${scopeTo}"> 
+${processBlock({
+  css: i.groups.insideBlock,
+  scopeTo,
+  disabled,
+  instance: false
+})} 
+</style>`
     if (i.groups.scope === 'instance')
-      result += `<style scope="${scopeTo}.${instance}"> ${processBlock({
-        css: i.groups.insideBlock,
-        scopeTo,
-        disable,
-        instance
-      })} </style>}`
+      result += `<style enh-scope="${scopeTo}.${instance}"> 
+${processBlock({
+  css: i.groups.insideBlock,
+  scopeTo,
+  disabled,
+  instance
+})} 
+</style>`
   })
   return result
 }
@@ -59,7 +63,7 @@ function processBlock({
             .replace(/(::slotted)\(\s*(.+)\s*\)/, '$2')
             .replace(
               /([[a-zA-Z0-9_-]*)(::part)\(\s*(.+)\s*\)/,
-              '[part*="$3"][part*="$1"]'
+              '$1 [part*="$3"][part*="$1"]'
             )
             // the component is added above so host is just removed here
             .replace(':host', '')

@@ -10,7 +10,6 @@
     },
     "devDependencies": {
         "@architect/eslint-config": "^2.0.1",
-        "@begin/data": "^3.0.4",
         "cssmitten": "^3.0.5",
         "eslint": "^8.4.1",
         "eslint-config-prettier": "^8.3.0",
@@ -22,8 +21,9 @@
         "tiny-json-http": "^7.3.0"
     },
     "dependencies": {
-        "@architect/architect": "^10.0.1",
-        "@architect/functions": "^5.0.2",
+        "@architect/architect": "^10.0.3",
+        "@architect/functions": "^5.0.4",
+        "@begin/data": "^4.0.0-RC.2",
         "@codemirror/basic-setup": "^0.19.1",
         "@codemirror/commands": "^0.19.8",
         "@codemirror/lang-html": "^0.19.4",
@@ -36,6 +36,7 @@
         "prism": "^4.1.2",
         "prismjs": "^1.26.0",
         "rework": "^1.0.1",
+        "ulid": "^2.3.0",
         "xss": "^1.0.8"
     },
     "eslintConfig": {

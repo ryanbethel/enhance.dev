@@ -11,7 +11,7 @@ export default function UserPage({ html }) {
     <link rel="stylesheet" href="/components/styles.css" />
     <div class="bg-p2 text-p1">
       <nav-bar></nav-bar>
-      <code-editor-new></code-editor-new>
+      <email-signup></email-signup>
       <div class="m-auto max-w-lg">
         <page-header>
           <span slot="title">Enhance</span>

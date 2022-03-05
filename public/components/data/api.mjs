@@ -15,17 +15,13 @@ export default function API() {
   }
 
   return {
+    repl,
     create,
     update,
     destroy,
     list,
-    flashRemove,
     subscribe: store.subscribe,
     unsubscribe: store.unsubscribe
-    // createUser,
-    // updateUser,
-    // destroyUser,
-    // listUsers,
   }
 }
 
@@ -34,38 +30,18 @@ function mutate(e) {
   const { result, type } = data
   switch (type) {
     case CREATE:
-      if (result.flash && result.flash.length) flashMutation(result)
-      else createMutation(result)
+      createMutation(result)
       break
     case UPDATE:
-      if (result.flash && result.flash.length) flashMutation(result)
-      else updateMutation(result)
+      updateMutation(result)
       break
     case DESTROY:
-      if (result.flash && result.flash.length) flashMutation(result)
-      else destroyMutation(result)
+      destroyMutation(result)
       break
     case LIST:
-      if (result.flash && result.flash.length) flashMutation(result)
-      else listMutation(result)
+      listMutation(result)
       break
   }
-}
-
-function flashRemove({ id }) {
-  let copy = store.flash.slice()
-  copy.splice(
-    copy.findIndex((i) => i.id === id),
-    1
-  )
-  store.flash = copy
-}
-
-function flashMutation(result) {
-  if (!store.flash) store.initialize({ flash: [] })
-  let copy = store.flash.slice()
-  copy = [...copy, ...result.flash]
-  store.flash = copy
 }
 
 function createMutation(result) {
@@ -122,4 +98,18 @@ function update(branch) {
     type: UPDATE,
     data: branch
   })
+}
+
+const repl = {
+  create: function ({ name, doc }) {
+    try {
+      if (!store[name]) store[name] = doc
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  update: function ({ name, doc }) {
+    store[name] = doc
+  }
 }

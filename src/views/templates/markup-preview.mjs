@@ -152,15 +152,30 @@ export default function ({ html, state = {} }) {
       }
     </style>
     <pre
-      class="language-html font-mono text-p1 text0 bg-g0 radius2 border-solid border-p0 border0 text-p2 p0 min-row-height-playground">
-      <code class="language-html font-mono text-p1 text0 leading1">
+      class="language-html font-mono text-p1 text-1 bg-g0 radius2 border-solid border-p0 border0 text-p2 p0 min-row-height-playground">
+      <code class="language-html font-mono text-p1 text-1 leading1">
 ${document}</code>
           </pre>
 
     <script type="module">
+      import API from '/components/data/api.mjs'
       class MarkupPreview extends HTMLElement {
         constructor() {
           super()
+          this.api = API()
+          this.update = this.update.bind(this)
+          this.codeBlock = this.querySelector('code')
+        }
+        connectedCallback() {
+          this.api.subscribe(this.update)
+        }
+        disconnectedCallback() {
+          this.api.unsubscribe(this.update)
+        }
+
+        update(srcDoc) {
+          console.log(srcDoc)
+          this.codeBlock.innerHTML = srcDoc.enhancedMarkup
         }
       }
       customElements.define('markup-preview', MarkupPreview)
